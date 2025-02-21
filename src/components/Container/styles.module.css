@@ -1,0 +1,17 @@
+.content {
+  padding: 12px;
+}
+
+.content.fluid {
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 24px;
+  }
+
+  .content.fluid {
+    padding: 0;
+  }
+}

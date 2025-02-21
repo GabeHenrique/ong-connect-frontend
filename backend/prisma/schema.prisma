@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            Int     @id @default(autoincrement())
+  email         String  @unique
+  password      String
+  name          String
+  role          String  @default("VOLUNTEER")
+  createdEvents Event[] @relation("CreatedEvents")
+  participating Event[] @relation("Participating")
+  applications  VolunteerApplication[]
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  location    String
+  date        DateTime
+  image       String?
+  vagas       Int      @default(10)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  creatorId   Int
+  creator     User     @relation("CreatedEvents", fields: [creatorId], references: [id])
+  causas      Causa[]  @relation("EventCausas")
+  volunteers  User[]   @relation("Participating")
+  applications VolunteerApplication[]
+}
+
+model Causa {
+  id     Int     @id @default(autoincrement())
+  nome   String
+  events Event[] @relation("EventCausas")
+}
+
+model VolunteerApplication {
+  id             Int      @id @default(autoincrement())
+  phone          String
+  qualifications String
+  observations   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  // Relações
+  event          Event    @relation(fields: [eventId], references: [id])
+  eventId        Int
+  user           User     @relation(fields: [userId], references: [id])
+  userId         Int
+
+  @@unique([eventId, userId])
+}
