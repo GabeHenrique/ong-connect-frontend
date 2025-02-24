@@ -8,7 +8,7 @@ import { User } from "@prisma/client";
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -33,7 +33,13 @@ export class AuthService {
     };
   }
 
-  async register(data: { email: string; password: string; name: string }) {
+  async register(data: {
+    email: string;
+    password: string;
+    name: string;
+    role: "ONG" | "VOLUNTEER";
+    confirmPassword?: string; // opcional agora
+  }) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -44,13 +50,17 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
+    // Desconstrói apenas os campos necessários
+    const { confirmPassword, ...userData } = data;
+
     const user = await this.prisma.user.create({
       data: {
-        ...data,
+        ...userData,
         password: hashedPassword,
       },
     });
 
+    // Remove o password do retorno
     const { password, ...result } = user;
     return result;
   }

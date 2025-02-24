@@ -6,8 +6,9 @@
 
 Conectando ONGs e voluntários para um impacto social maior.
 
-[![Next.js](https://img.shields.io/badge/Next.js-13-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-darkblue)](https://react.dev/)
 [![Ant Design](https://img.shields.io/badge/Ant%20Design-5-blue)](https://ant.design/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -53,12 +54,10 @@ O ONGConnect é uma plataforma que visa facilitar a conexão entre ONGs e pessoa
 
 ### Frontend
 
-- **Next.js 13** - Framework React com SSR
+- **Next.js 15** - Framework React com SSR
 - **TypeScript** - Tipagem estática
 - **Ant Design** - Sistema de design
 - **NextAuth.js** - Autenticação
-- **React Query** - Gerenciamento de estado
-- **Axios** - Cliente HTTP
 
 ### Backend
 
@@ -73,40 +72,31 @@ O ONGConnect é uma plataforma que visa facilitar a conexão entre ONGs e pessoa
 ### Pré-requisitos
 
 - Node.js 18+
-- npm ou yarn
+- bun (Baixe em [bun.sh](https://bun.sh/))
 - Git
 - PostgreSQL 14+
-- Docker (opcional)
 
 ### Instalação
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/ong-connect.git
+git clone https://github.com/GabeHenrique/ong-connect-frontend
 
-# Instale as dependências do frontend
+# Entre no diretório
 cd ong-connect-frontend
-npm install
 
-# Configure o frontend
+# Instale as dependências
+bun install
+
+# Configure os ambientes
 cp .env.example .env
-
-# Configure o backend
-cd backend
-npm install
-
-# Configure o backend
-cp .env.example .env
+cp backend/.env.example backend/.env
 
 # Execute as migrations do Prisma
-npx prisma migrate dev
+bun prisma:migrate
 
-# Em um terminal, inicie o backend
-npm run start:dev
-
-# Em outro terminal, volte para o frontend e inicie-o
-cd ..
-npm run dev
+# Inicie o projeto em desenvolvimento
+bun dev
 ```
 
 ### Configuração

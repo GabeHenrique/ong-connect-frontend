@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect, useState } from "react";
-import { Button, Divider, Form, Input, Typography, Alert } from "antd";
+import { Button, Divider, Form, Input, Typography, Alert, Radio } from "antd";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Container from "@/components/Container";
@@ -103,9 +103,11 @@ const SignupPage: FC = () => {
       >
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
           <Title level={2} style={{ marginBottom: "8px" }}>
-            Crie sua conta de Voluntário
+            Criar Conta
           </Title>
-          <Text type="secondary">Comece a participar de ações sociais</Text>
+          <Text type="secondary">
+            Escolha seu tipo de conta e comece a fazer a diferença
+          </Text>
         </div>
 
         {userRegistred && (
@@ -121,12 +123,38 @@ const SignupPage: FC = () => {
 
         <Form layout="vertical" onFinish={onFinish} size="large">
           <Form.Item
+            name="role"
+            label="Tipo de Conta"
+            rules={[
+              {
+                required: true,
+                message: "Por favor, selecione o tipo de conta",
+              },
+            ]}
+          >
+            <Radio.Group style={{ width: "100%" }}>
+              <Radio.Button
+                value="VOLUNTEER"
+                style={{ width: "50%", textAlign: "center" }}
+              >
+                Voluntário
+              </Radio.Button>
+              <Radio.Button
+                value="ONG"
+                style={{ width: "50%", textAlign: "center" }}
+              >
+                ONG
+              </Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item
             name="name"
             rules={[{ required: true, message: "Por favor, insira seu nome" }]}
           >
             <Input
               prefix={<IdcardOutlined style={{ color: "#bfbfbf" }} />}
-              placeholder="Seu nome"
+              placeholder="Nome completo / Nome da ONG"
             />
           </Form.Item>
 
