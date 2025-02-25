@@ -7,6 +7,7 @@ import {
   Typography,
   InputNumber,
   Alert,
+  Upload,
 } from "antd";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -16,9 +17,11 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   FormOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { ThemeContext } from "@/pages/_app";
 import dayjs from "dayjs";
+import type { RcFile, UploadFile } from "antd/es/upload/interface";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -30,6 +33,7 @@ const CreateEventPage: FC = () => {
   const [isError, setIsError] = useState(false);
   const { darkMode } = useContext(ThemeContext);
   const DATE_FORMAT = "DD/MM/YYYY HH:mm";
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
     if (isError) {
@@ -65,18 +69,13 @@ const CreateEventPage: FC = () => {
       formData.append("date", values.date.toISOString());
       formData.append("vagas", String(values.vagas));
 
-      const fileInput = document.querySelector(
-        'input[type="file"]',
-      ) as HTMLInputElement;
-      const file = fileInput?.files?.[0];
-
-      if (file) {
-        formData.append("image", file);
+      if (fileList[0]?.originFileObj) {
+        formData.append("image", fileList[0].originFileObj);
       }
 
       const result = await eventService.createEvent(
         formData,
-        session.accessToken,
+        session.accessToken
       );
 
       if (result.id) {
@@ -90,6 +89,20 @@ const CreateEventPage: FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const beforeUpload = (file: RcFile) => {
+    const isImage = file.type.startsWith("image/");
+    if (!isImage) {
+      message.error("Você só pode fazer upload de imagens!");
+      return false;
+    }
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      message.error("A imagem deve ser menor que 5MB!");
+      return false;
+    }
+    return false;
   };
 
   return (
@@ -211,18 +224,24 @@ const CreateEventPage: FC = () => {
                 message: "Por favor, insira a imagem do evento",
               },
             ]}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => {
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e?.fileList;
+            }}
           >
-            <Input
-              type="file"
-              accept="image/*" // Aceitar apenas imagens
-              onChange={(e) => {
-                // Opcional: você pode adicionar validação de arquivo aqui
-                const file = e.target.files?.[0];
-                if (file && file.size > 5 * 1024 * 1024) {
-                  e.target.value = "";
-                }
-              }}
-            />
+            <Upload
+              listType="picture"
+              maxCount={1}
+              fileList={fileList}
+              beforeUpload={beforeUpload}
+              onChange={({ fileList }) => setFileList(fileList)}
+              accept="image/*"
+            >
+              <Button icon={<UploadOutlined />}>Selecionar Imagem</Button>
+            </Upload>
           </Form.Item>
 
           <Form.Item style={{ marginTop: "32px" }}>

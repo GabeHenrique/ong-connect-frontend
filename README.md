@@ -173,7 +173,7 @@ Para mais detalhes sobre a implementação, consulte nossa [Wiki](wiki-link) que
 * [ ] Adicionar documentação de API
 * [ ] Adicionar documentação de arquitetura
 * [ ] Adicionar funcionalidade de recuperação de senha]
-* [ ] Adicionar funcionalidade de listar voluntários por evento (ONG)
+* [X] Adicionar funcionalidade de listar voluntários por evento (ONG)
 * [ ] Usar coordenadas para localização de eventos
 * [ ] Adicionar funcionalidade de favoritar eventos
 * [ ] Adicionar funcionalidade de listar eventos próximos

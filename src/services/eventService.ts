@@ -54,14 +54,24 @@ export type CreateEventDto = {
   description: string;
   location: string;
   date: string;
-  vagas: number; // Garantindo que vagas seja number
+  vagas: number;
   image: File;
+};
+
+export type VolunteerApplicationDto = {
+  eventName: string;
+  id: number;
+  observations: string;
+  phone: string;
+  qualifications: string;
+  email: string;
+  name: string;
 };
 
 export const eventService = {
   async getAllEvents(limit?: number, search?: string): Promise<EventDto[]> {
     const res = await fetch(
-      API_URL + `/events?limit=${limit}&search=${search}`,
+      API_URL + `/events?limit=${limit}&search=${search}`
     );
     return res.json();
   },
@@ -81,25 +91,16 @@ export const eventService = {
   },
 
   async createEvent(data: FormData, token: string) {
-    // Debug
-    console.log("Enviando FormData para o backend:");
-    for (let pair of data.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
     const res = await fetch(`${API_URL}/events`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        // Importante: NÃO defina Content-Type aqui
-        // O navegador vai definir automaticamente com o boundary correto para o FormData
       },
       body: data,
     });
 
     if (!res.ok) {
       const error = await res.json();
-      console.error("Erro da API:", error); // Debug
       throw new Error(error.message || "Erro ao criar evento");
     }
 
@@ -135,7 +136,7 @@ export const eventService = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     return res.json();
   },
@@ -143,7 +144,7 @@ export const eventService = {
   async applyForEvent(
     eventId: number,
     data: VolunteerApplication,
-    token: string,
+    token: string
   ) {
     const res = await fetch(`${API_URL}/events/${eventId}/apply`, {
       method: "POST",
@@ -152,6 +153,19 @@ export const eventService = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  async getVolunteers(
+    eventId: number,
+    token: string
+  ): Promise<VolunteerApplicationDto[]> {
+    const res = await fetch(`${API_URL}/events/${eventId}/applications`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     return res.json();
   },

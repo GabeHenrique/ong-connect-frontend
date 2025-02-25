@@ -15,13 +15,17 @@ import {
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Container from "@/components/Container";
-import {EventDto, eventService, VolunteerApplication} from "@/services/eventService";
+import {
+  EventDto,
+  eventService,
+  VolunteerApplication,
+} from "@/services/eventService";
 import {
   CalendarOutlined,
   EnvironmentOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import {NotificationPlacement} from "antd/es/notification/interface";
+import { NotificationPlacement } from "antd/es/notification/interface";
 
 const { Title, Text, Paragraph } = Typography;
 const Context = React.createContext({ name: "Default" });
@@ -49,7 +53,7 @@ const EventPage: FC = () => {
 
   const openNotification = (
     placement: NotificationPlacement,
-    isSuccess: boolean,
+    isSuccess: boolean
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     isSuccess
@@ -69,11 +73,10 @@ const EventPage: FC = () => {
 
   useEffect(() => {
     if (event && session && session.user) {
-      console.log(event);
       setIsConfirmed(
         event.volunteers?.some(
-          (attendee) => attendee.email === session.user?.email,
-        ),
+          (attendee) => attendee.email === session.user?.email
+        )
       );
       setBelongsToUser(event.creator?.email === session.user.email);
     }
@@ -97,7 +100,7 @@ const EventPage: FC = () => {
         const updatedEvent = await eventService.toggleAttendance(
           event.id,
           session.user.email!,
-          session.accessToken,
+          session.accessToken
         );
         openNotification("bottomRight", isConfirmed);
         form.resetFields();
@@ -148,7 +151,7 @@ const EventPage: FC = () => {
         const updatedEvent = await eventService.applyForEvent(
           event.id,
           values,
-          session.accessToken,
+          session.accessToken
         );
         setEvent(updatedEvent);
         openNotification("bottomRight", false);
@@ -169,6 +172,10 @@ const EventPage: FC = () => {
     form.setFieldValue("phone", formatted);
   };
 
+  const onClickToSubscriptions = () => {
+    router.push(`/event/${event?.id}/subscriptions`);
+  };
+
   const contextValue = useMemo(() => ({ name: "Ant Design" }), []);
 
   if (!event) return null;
@@ -177,6 +184,25 @@ const EventPage: FC = () => {
     <Context.Provider value={contextValue}>
       {contextHolder}
       <Container header>
+        {belongsToUser && (
+          <div
+            style={{
+              maxWidth: 1200,
+              margin: "0 auto",
+              paddingRight: "24px",
+              textAlign: "right",
+            }}
+          >
+            <Button
+              color="primary"
+              size="large"
+              variant="solid"
+              onClick={onClickToSubscriptions}
+            >
+              Visualizar Inscritos
+            </Button>
+          </div>
+        )}
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px" }}>
           <Card
             style={{

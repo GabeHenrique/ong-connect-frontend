@@ -28,7 +28,7 @@ export class AuthController {
       password: string;
       name: string;
       role: "ONG" | "VOLUNTEER";
-    },
+    }
   ) {
     return this.authService.register(registerDto);
   }
@@ -37,5 +37,15 @@ export class AuthController {
   @HttpCode(200)
   signout() {
     return { message: "Logged out successfully" };
+  }
+
+  @Post("forgot-password")
+  async forgotPassword(@Body("email") email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post("reset-password")
+  async resetPassword(@Body() data: { token: string; password: string }) {
+    return this.authService.resetPassword(data.token, data.password);
   }
 }

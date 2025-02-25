@@ -16,6 +16,7 @@ model User {
   createdEvents Event[]                @relation("CreatedEvents")
   applications  VolunteerApplication[]
   participating Event[]                @relation("Participating")
+  resetPasswordToken String?           @unique
 }
 
 model Event {

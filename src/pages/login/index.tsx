@@ -24,7 +24,7 @@ const LoginPage: FC = () => {
         password: values.password,
       });
 
-      if (result.status === 401) {
+      if (result!.status === 401) {
         setUnauthorized(true);
       }
 
@@ -94,16 +94,23 @@ const LoginPage: FC = () => {
           </Form.Item>
 
           <Form.Item
+          style={{ marginBottom: "0" }}
             name="password"
             rules={[{ required: true, message: "Por favor, insira sua senha" }]}
           >
             <Input.Password
+              style={{ marginBottom: "8px" }}
               prefix={<LockOutlined style={{ color: "#bfbfbf" }} />}
               placeholder="Sua senha"
             />
           </Form.Item>
-
-          <Form.Item>
+          <Link
+            href="/forgot-password"
+            style={{ color: "#1890ff", paddingLeft: "8px" }}
+          >
+            Esqueceu sua senha?
+          </Link>
+          <Form.Item style={{ marginTop: "16px" }}>
             <Button
               type="primary"
               htmlType="submit"

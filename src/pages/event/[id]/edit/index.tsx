@@ -8,6 +8,8 @@ import {
   InputNumber,
   Alert,
   Spin,
+  Upload,
+  message,
 } from "antd";
 import Image from "next/image";
 
@@ -19,10 +21,12 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   FormOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { ThemeContext } from "@/pages/_app";
 import dayjs from "dayjs";
 import { EventDto } from "@/services/eventService";
+import type { RcFile, UploadFile } from "antd/es/upload/interface";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -37,6 +41,7 @@ const EditEventPage: FC = () => {
   const [form] = Form.useForm();
   const { darkMode } = useContext(ThemeContext);
   const DATE_FORMAT = "DD/MM/YYYY HH:mm";
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -53,6 +58,18 @@ const EditEventPage: FC = () => {
           date: dayjs(eventData.date),
           vagas: eventData.vagas,
         });
+
+        // Se houver imagem, adicionar ao fileList
+        if (eventData.image) {
+          setFileList([
+            {
+              uid: "-1",
+              name: "current-image.jpg",
+              status: "done",
+              url: eventData.image,
+            },
+          ]);
+        }
       } catch (error) {
         console.error("Error fetching event:", error);
         setIsError(true);
@@ -74,6 +91,20 @@ const EditEventPage: FC = () => {
     return null;
   }
 
+  const beforeUpload = (file: RcFile) => {
+    const isImage = file.type.startsWith("image/");
+    if (!isImage) {
+      message.error("Você só pode fazer upload de imagens!");
+      return false;
+    }
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      message.error("A imagem deve ser menor que 5MB!");
+      return false;
+    }
+    return false;
+  };
+
   const onFinish = async (values: any) => {
     if (!session || !id) return;
 
@@ -86,19 +117,14 @@ const EditEventPage: FC = () => {
       formData.append("date", values.date.toISOString());
       formData.append("vagas", values.vagas.toString());
 
-      const fileInput = document.querySelector(
-        'input[type="file"]',
-      ) as HTMLInputElement;
-      const file = fileInput?.files?.[0];
-
-      if (file) {
-        formData.append("image", file);
+      if (fileList[0]?.originFileObj) {
+        formData.append("image", fileList[0].originFileObj);
       }
 
       const result = await eventService.updateEvent(
         Number(id),
         formData,
-        session.accessToken,
+        session.accessToken
       );
 
       if (result.id) {
@@ -241,17 +267,33 @@ const EditEventPage: FC = () => {
             />
           </Form.Item>
 
-          <Form.Item label="Nova Imagem (opcional)" name="image">
-            <Input
-              type="file"
+          <Form.Item
+            label="Imagem"
+            name="image"
+            rules={[
+              {
+                required: true,
+                message: "Por favor, insira a imagem do evento",
+              },
+            ]}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => {
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e?.fileList;
+            }}
+          >
+            <Upload
+              listType="picture"
+              maxCount={1}
+              fileList={fileList}
+              beforeUpload={beforeUpload}
+              onChange={({ fileList }) => setFileList(fileList)}
               accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file && file.size > 5 * 1024 * 1024) {
-                  e.target.value = "";
-                }
-              }}
-            />
+            >
+              <Button icon={<UploadOutlined />}>Selecionar Imagem</Button>
+            </Upload>
           </Form.Item>
 
           {event.image && (

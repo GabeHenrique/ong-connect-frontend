@@ -18,6 +18,7 @@ import { Event } from "@prisma/client";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { VolunteerApplicationDto } from "./event.interface";
 
 @Controller("events")
 export class EventController {
@@ -49,7 +50,6 @@ export class EventController {
     },
     @UploadedFile() file?: Express.Multer.File,
   ) {
-    console.log(req.user);
     return this.eventService.create(
       {
         ...createEventDto,
@@ -112,5 +112,11 @@ export class EventController {
   @Get("user/:email")
   getEventsByUser(@Param("email") email: string) {
     return this.eventService.getEventsByUser(email);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(":id/applications")
+  getApplications(@Param("id") id: string): Promise<VolunteerApplicationDto[]> {
+    return this.eventService.findVolunteersFromEventId(+id);
   }
 }

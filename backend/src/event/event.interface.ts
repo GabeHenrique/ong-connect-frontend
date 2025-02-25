@@ -15,3 +15,13 @@ export interface UpdateEventDto {
   image?: string;
   vagas?: number;
 }
+
+export interface VolunteerApplicationDto {
+  eventName: string;
+  id: number;
+  observations: string;
+  phone: string;
+  qualifications: string;
+  email: string;
+  name: string;
+}
