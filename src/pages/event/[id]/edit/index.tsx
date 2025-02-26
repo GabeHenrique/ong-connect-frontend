@@ -270,12 +270,6 @@ const EditEventPage: FC = () => {
           <Form.Item
             label="Imagem"
             name="image"
-            rules={[
-              {
-                required: true,
-                message: "Por favor, insira a imagem do evento",
-              },
-            ]}
             valuePropName="fileList"
             getValueFromEvent={(e) => {
               if (Array.isArray(e)) {

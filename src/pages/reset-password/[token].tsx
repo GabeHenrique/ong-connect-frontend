@@ -100,8 +100,21 @@ const ResetPasswordPage: FC = () => {
             <Form.Item
               name="password"
               rules={[
-                { required: true, message: "Por favor, insira sua nova senha" },
+                { required: true, message: "Por favor, insira sua senha" },
                 { min: 8, message: "A senha deve ter pelo menos 8 caracteres" },
+                {
+                  pattern: /[a-zA-Z]/,
+                  message: "A senha deve conter pelo menos uma letra",
+                },
+                {
+                  pattern: /\d/,
+                  message: "A senha deve conter pelo menos um número",
+                },
+                {
+                  pattern: /[!@#$%^&*(),.?":{}|<>]/,
+                  message:
+                    "A senha deve conter pelo menos um caractere especial",
+                },
               ]}
             >
               <Input.Password

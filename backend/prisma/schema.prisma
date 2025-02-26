@@ -3,20 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id            Int                    @id @default(autoincrement())
-  email         String                 @unique
-  password      String
-  name          String
-  role          String                 @default("VOLUNTEER")
-  createdEvents Event[]                @relation("CreatedEvents")
-  applications  VolunteerApplication[]
-  participating Event[]                @relation("Participating")
-  resetPasswordToken String?           @unique
+  id                 Int                    @id @default(autoincrement())
+  email              String                 @unique
+  password           String
+  name               String
+  role               String                 @default("VOLUNTEER")
+  resetPasswordToken String?                @unique
+  createdEvents      Event[]                @relation("CreatedEvents")
+  applications       VolunteerApplication[]
+  participating      Event[]                @relation("Participating")
 }
 
 model Event {
@@ -51,8 +51,8 @@ model VolunteerApplication {
   updatedAt      DateTime @updatedAt
   eventId        Int
   userId         Int
-  user           User     @relation(fields: [userId], references: [id])
   event          Event    @relation(fields: [eventId], references: [id])
+  user           User     @relation(fields: [userId], references: [id])
 
   @@unique([eventId, userId])
 }
