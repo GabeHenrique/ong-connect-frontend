@@ -18,7 +18,7 @@ const ForgotPasswordPage: FC = () => {
     setError("");
     
     try {
-      const API_URL = `${process.env.API_URL}`;
+      const API_URL = `${process.env.BACKEND_API_URL}`;
       const response = await fetch(`${API_URL}/auth/forgot-password`, {
         method: "POST",
         headers: {
