@@ -27,10 +27,11 @@ const ResetPasswordPage: FC = () => {
 
     setLoading(true);
     setError("");
+    const API_URL = `${process.env.API_URL}`;
 
     try {
       const response = await fetch(
-        "http://localhost:3000/auth/reset-password",
+        `${API_URL}/auth/reset-password`,
         {
           method: "POST",
           headers: {

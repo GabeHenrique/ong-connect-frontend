@@ -18,7 +18,8 @@ const ForgotPasswordPage: FC = () => {
     setError("");
     
     try {
-      const response = await fetch("http://localhost:3000/auth/forgot-password", {
+      const API_URL = `${process.env.API_URL}`;
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
