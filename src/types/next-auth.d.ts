@@ -1,5 +1,7 @@
 import "next-auth";
 
+export const AUTH_PROVIDER = 'credentials';
+
 declare module "next-auth" {
   interface User {
     id: number;

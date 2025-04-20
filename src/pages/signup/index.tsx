@@ -6,6 +6,7 @@ import Container from "@/components/Container";
 import Link from "next/link";
 import { IdcardOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { ThemeContext } from "../_app";
+import { AUTH_PROVIDER } from "@/types/next-auth";
 
 const { Title, Text } = Typography;
 
@@ -50,7 +51,7 @@ const SignupPage: FC = () => {
       setUserRegistred(false);
 
       if (response.ok) {
-        const result = await signIn("credentials", {
+        const result = await signIn(AUTH_PROVIDER, {
           redirect: false,
           email: values.email,
           password: values.password,

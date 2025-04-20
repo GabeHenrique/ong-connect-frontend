@@ -1,10 +1,11 @@
+import { AUTH_PROVIDER } from "@/types/next-auth";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export default NextAuth({
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: AUTH_PROVIDER,
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
@@ -51,6 +52,9 @@ export default NextAuth({
       session.user.role = token.role as "ONG" | "VOLUNTEER";
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
+    }
   },
   pages: {
     signIn: "/login",
