@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Container from "@/components/Container";
 import { Card, Empty, Row, Space, Typography } from "antd";
 import EventCard from "@/components/EventCard";
