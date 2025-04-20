@@ -3,31 +3,34 @@ import Container from "@/components/Container";
 import { Card, Empty, Row, Space, Typography } from "antd";
 import EventCard from "@/components/EventCard";
 import { EventDto, eventService } from "@/services/eventService";
-import { useSession } from "next-auth/react";
 
 const { Title, Text } = Typography;
 
 const MyEvents: FC = () => {
   const [events, setEvents] = useState<EventDto[]>([]);
-  const { data: session } = useSession();
-  const isOng = useRef<boolean>(null);
+  const [isOng, setIsOng] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    isOng.current = session?.user?.role === "ONG";
+    const role = localStorage.getItem("userRole");
+    const accessToken = localStorage.getItem("accessToken");
+    const email = localStorage.getItem("userEmail");
+
+    console.log("role", role);
+    setIsOng(role === "ONG");
+
     async function fetchEvents() {
-      if (session) {
-        const response = await eventService.getEventsByUser(
-          session.accessToken,
-          session.user!.email!,
-        );
+      if (accessToken && email) {
+        const response = await eventService.getEventsByUser(accessToken, email);
         setEvents(response);
       }
     }
 
     fetchEvents();
-  }, [session]);
+    setIsLoading(false);
+  }, []);
 
-  return (
+  return !isLoading && (
     <Container header={true}>
       <div
         style={{
@@ -46,12 +49,12 @@ const MyEvents: FC = () => {
           <Space align="center" style={{ width: "100%" }}>
             <div>
               <Title level={2} style={{ margin: 0 }}>
-                {isOng && isOng.current
+                {isOng && isOng
                   ? "Ações da minha ONG"
                   : "Meus Voluntariados"}
               </Title>
               <Text type="secondary">
-                {isOng && isOng.current
+                {isOng && isOng
                   ? "Veja as ações que sua ONG está promovendo"
                   : "Veja as ações que você está participando"}
               </Text>
@@ -71,7 +74,7 @@ const MyEvents: FC = () => {
             <Empty
               description={
                 <Text type="secondary" style={{ fontSize: "16px" }}>
-                  {isOng && isOng.current
+                  {isOng && isOng
                     ? "Você ainda não criou nenhuma ação voluntária"
                     : "Você ainda não participa de nenhuma ação voluntária"}
                 </Text>

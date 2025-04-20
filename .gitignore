@@ -92,6 +92,6 @@ backend/pids
 backend/*.pid
 backend/*.seed
 backend/*.pid.lock
-
+ong-connect-backend
 # Diagnostic reports (https://nodejs.org/api/report.html)
 backend/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

@@ -2,7 +2,6 @@ import { AppProps } from "next/app";
 import { ConfigProvider, theme } from "antd";
 import ptBR from "antd/locale/pt_BR";
 import "../styles/globals.css";
-import { SessionProvider } from "next-auth/react";
 import React, { createContext, useEffect, useState } from "react";
 import Head from "next/head";
 
@@ -47,9 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
         }}
       >
-        <SessionProvider session={pageProps.session}>
-          <Component {...pageProps} />
-        </SessionProvider>
+        <Component {...pageProps} />
       </ConfigProvider>
     </ThemeContext.Provider>
   );

@@ -1,12 +1,10 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { Form, Input, Button, message, Typography, Divider, Alert } from "antd";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Container from "@/components/Container";
 import Link from "next/link";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { ThemeContext } from "../_app";
-import {AUTH_PROVIDER} from "@/pages/api/auth/[...nextauth]";
 
 const { Title, Text } = Typography;
 
@@ -19,22 +17,26 @@ const LoginPage: FC = () => {
   const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
     try {
-      const result = await signIn(AUTH_PROVIDER, {
-        redirect: false,
-        email: values.email,
-        password: values.password,
+      const response = await fetch(`${process.env.API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
       });
 
-      if (result!.status === 401) {
-        setUnauthorized(true);
-      }
-
-      if (result?.error) {
-        message.error("Credenciais inválidas");
-      } else {
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("accessToken", data.access_token);
+        localStorage.setItem("userRole", data.user.role);
         message.success("Login realizado com sucesso");
         await router.push("/");
+      } else {
+        setUnauthorized(true);
+        message.error("Credenciais inválidas");
       }
+    } catch (error) {
+      message.error("Erro ao conectar ao servidor");
     } finally {
       setLoading(false);
     }

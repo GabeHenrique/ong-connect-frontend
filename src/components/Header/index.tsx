@@ -1,7 +1,6 @@
 import { FC, useEffect, useRef, useState, useContext } from "react";
 import { Button, Layout, Space, Drawer, Switch } from "antd";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import {
   CalendarOutlined,
@@ -19,25 +18,31 @@ import { ThemeContext } from "@/pages/_app";
 const { Header: AntHeader } = Layout;
 
 const Header: FC = () => {
-  const { data: session, status } = useSession();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<"ONG" | "VOLUNTEER" | null>(null);
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isOng = useRef<boolean>(null);
   const { darkMode, toggleTheme } = useContext(ThemeContext);
 
   useEffect(() => {
-    isOng.current = session?.user?.role === "ONG";
-  }, [session]);
+    const token = localStorage.getItem("accessToken");
+    const role = localStorage.getItem("userRole");
+    setIsAuthenticated(!!token);
+    setUserRole(role as "ONG" | "VOLUNTEER" | null);
+  }, []);
 
-  const handleSignOut = async () => {
-    await signOut({ redirect: false });
-    await router.push("/");
+  const handleSignOut = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userRole");
+    setIsAuthenticated(false);
+    setUserRole(null);
+    router.push("/");
     setMobileMenuOpen(false);
   };
 
   const NavItems = () => (
     <>
-      {status === "authenticated" ? (
+      {isAuthenticated ? (
         <Space
           direction={mobileMenuOpen ? "vertical" : "horizontal"}
           size="middle"
@@ -50,7 +55,7 @@ const Header: FC = () => {
             onChange={toggleTheme}
           />
 
-          {session?.user?.role === "ONG" && (
+          {userRole === "ONG" && (
             <Link href="/event/create">
               <Button
                 type="primary"
@@ -79,7 +84,7 @@ const Header: FC = () => {
               }}
               onClick={() => setMobileMenuOpen(false)}
             >
-              {isOng && isOng.current ? "Minhas Ações" : "Meus Voluntariados"}
+              {userRole === "ONG" ? "Minhas Ações" : "Meus Voluntariados"}
             </Button>{" "}
           </Link>
 
