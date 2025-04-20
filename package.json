@@ -2,43 +2,26 @@
   "name": "ong-connect",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "backend"
-  ],
   "scripts": {
-    "dev": "bun run dev:frontend & bun run dev:backend",
-    "build": "bun --bun next build",
-    "start": "bun --bun next start",
-    "lint": "bun --bun next lint",
-    "dev:frontend": "bun --bun next dev --turbopack",
-    "dev:backend": "bun run --cwd backend start:dev",
-    "prisma:studio": "cd backend && bun prisma studio",
-    "prisma:generate": "cd backend && bun prisma generate",
-    "prisma:migrate": "cd backend && bun prisma migrate dev",
-    "prisma:deploy": "cd backend && bun prisma migrate deploy",
-    "prisma:format": "cd backend && bun prisma format"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
     "@eslint/eslintrc": "^3",
     "@prisma/adapter-pg": "^6.4.1",
-    "@types/next-auth": "^3.13.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "antd": "^5.24.1",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
-    "next": "15.1.7",
+    "next": "^15.3.1",
     "next-auth": "^4.24.11",
-    "nodemailer": "^6.10.0",
-    "pg": "^8.13.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "typescript": "^5"
-  },
-  "devDependencies": {
-    "@types/nodemailer": "^6.4.17",
-    "bun-types": "latest"
   }
 }

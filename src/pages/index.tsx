@@ -4,18 +4,24 @@ import { SearchOutlined } from "@ant-design/icons";
 import Container from "@/components/Container";
 import { EventDto, eventService } from "@/services/eventService";
 import EventCard from "@/components/EventCard";
+import { useRouter } from "next/router";
 
 const { Title, Text } = Typography;
 
 const Home: FC = () => {
   const [events, setEvents] = useState<EventDto[]>([]);
   const [search, setSearch] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchEvents() {
+      try {
       const response = await eventService.getAllEvents(12, search);
       setEvents(response);
+    } catch (error) {
+      router.push("/500");
     }
+  }
     fetchEvents();
   }, [search]);
 

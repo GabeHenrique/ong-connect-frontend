@@ -9,10 +9,12 @@ const nextConfig: NextConfig = {
     domains: [
       "placehold.co",
       "www.google.com.br",
-      "ong-connect.s3.us-east-2.amazonaws.com",
+      "ong-connect.s3.us-east-1.amazonaws.com",
+      "iefmybeqnivniklaxpbo.supabase.co"
     ],
     dangerouslyAllowSVG: true,
   },
+  transpilePackages: ['antd', '@ant-design', 'rc-util', 'rc-pagination', 'rc-picker', 'rc-input'],
 };
 
 export default nextConfig;
