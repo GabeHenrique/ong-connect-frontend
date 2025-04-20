@@ -6,7 +6,7 @@ import Container from "@/components/Container";
 import Link from "next/link";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { ThemeContext } from "../_app";
-import { AUTH_PROVIDER } from "@/types/next-auth";
+import {AUTH_PROVIDER} from "@/pages/api/auth/[...nextauth]";
 
 const { Title, Text } = Typography;
 

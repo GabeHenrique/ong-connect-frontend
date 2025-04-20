@@ -1,6 +1,7 @@
-import { AUTH_PROVIDER } from "@/types/next-auth";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
+export const AUTH_PROVIDER = 'credentials';
 
 export default NextAuth({
   providers: [
