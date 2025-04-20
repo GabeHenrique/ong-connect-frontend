@@ -11,7 +11,7 @@ export default NextAuth({
       },
       async authorize(credentials) {
         try {
-          const res = await fetch(`${process.env.BACKEND_API_URL}/auth/login`, {
+          const res = await fetch(`${process.env.API_URL}/auth/login`, {
             method: "POST",
             body: JSON.stringify(credentials),
             headers: {
@@ -61,7 +61,7 @@ export default NextAuth({
       // Você pode adicionar lógica adicional aqui se necessário
       // Por exemplo, invalidar tokens no backend
       try {
-        await fetch(`${process.env.BACKEND_API_URL}/auth/signout`, {
+        await fetch(`${process.env.API_URL}/auth/signout`, {
           method: "POST",
         });
       } catch (error) {
