@@ -94,12 +94,10 @@ const CreateEventPage: FC = () => {
   const beforeUpload = (file: RcFile) => {
     const isImage = file.type.startsWith("image/");
     if (!isImage) {
-      message.error("Você só pode fazer upload de imagens!");
       return false;
     }
     const isLt5M = file.size / 1024 / 1024 < 5;
     if (!isLt5M) {
-      message.error("A imagem deve ser menor que 5MB!");
       return false;
     }
     return false;

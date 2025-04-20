@@ -47,8 +47,8 @@ export default NextAuth({
       return token;
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken;
-      session.user.role = token.role;
+      session.accessToken = token.accessToken as string;
+      session.user.role = token.role as "ONG" | "VOLUNTEER";
       return session;
     },
   },
