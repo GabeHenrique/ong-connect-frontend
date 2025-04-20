@@ -20,9 +20,9 @@ Conectando ONGs e voluntários para um impacto social maior.
 - [Funcionalidades](#-funcionalidades)
 - [Tecnologias](#-tecnologias)
 - [Começando](#-começando)
-  - [Pré-requisitos](#pré-requisitos)
-  - [Instalação](#instalação)
-  - [Configuração](#configuração)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Configuração](#configuração)
 - [Arquitetura](#-arquitetura)
 - [Documentação](#-documentação)
 - [Contribuindo](#-contribuindo)
@@ -59,22 +59,13 @@ O ONGConnect é uma plataforma que visa facilitar a conexão entre ONGs e pessoa
 - **Ant Design** - Sistema de design
 - **NextAuth.js** - Autenticação
 
-### Backend
-
-- **NestJS** - Framework Node.js
-- **Prisma** - ORM
-- **PostgreSQL** - Banco de dados
-- **JWT** - Autenticação
-- **Jest** - Testes
-
 ## 🏁 Começando
 
 ### Pré-requisitos
 
 - Node.js 18+
-- bun (Baixe em [bun.sh](https://bun.sh/))
+- yarn (Baixe em [yarnpkg.com](https://yarnpkg.com/))
 - Git
-- PostgreSQL 14+
 
 ### Instalação
 
@@ -86,42 +77,22 @@ git clone https://github.com/GabeHenrique/ong-connect-frontend
 cd ong-connect-frontend
 
 # Instale as dependências
-bun install
+yarn install
 
 # Configure os ambientes
 cp .env.example .env
-cp backend/.env.example backend/.env
-
-# Execute as migrations do Prisma
-bun prisma:migrate
 
 # Inicie o projeto em desenvolvimento
-bun dev
+yarn dev
 ```
 
 ### Configuração
-
-#### Frontend (`/`)
 
 1. Crie um arquivo `.env` baseado no `.env.example`
 2. Configure as variáveis:
 
 ```env
 API_URL='http://localhost:3000'
-```
-
-#### Backend (`/backend`)
-
-1. Crie um arquivo `.env` baseado no `.env.example`
-2. Configure as variáveis:
-
-```env
-PORT=3000
-JWT_SECRET='sua-chave-secreta'
-AWS_ACCESS_KEY_ID=seu-id-de-acesso-da-aws
-AWS_SECRET_ACCESS_KEY=sua-chave-de-acesso-da-aws
-AWS_REGION=sua-regiao-da-aws
-AWS_BUCKET_NAME=ong-connect
 ```
 
 ## 🏗 Arquitetura
@@ -137,17 +108,6 @@ ong-connect/
 │   ├── styles/        # Estilos globais
 │   ├── types/         # Tipagens TypeScript
 │   └── utils/         # Funções utilitárias
-│
-├── backend/           # Backend
-│   ├── src/
-│   │   ├── auth/     # Autenticação
-│   │   ├── events/   # Módulo de eventos
-│   │   ├── users/    # Módulo de usuários
-│   │   └── common/   # Código compartilhado
-│   │
-│   ├── prisma/       # Configuração do banco
-│   └── test/         # Testes
-
 ```
 
 ## 📚 Documentação
