@@ -3,6 +3,7 @@ import Container from "@/components/Container";
 import { Card, Empty, Row, Space, Typography } from "antd";
 import EventCard from "@/components/EventCard";
 import { EventDto, eventService } from "@/services/eventService";
+import { User } from "@/types/user";
 
 const { Title, Text } = Typography;
 
@@ -10,25 +11,29 @@ const MyEvents: FC = () => {
   const [events, setEvents] = useState<EventDto[]>([]);
   const [isOng, setIsOng] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+   const [user, setUser] = useState<User>();
+ 
+   useEffect(() => {
+     const userStorage = localStorage.getItem("user");
+     setUser(userStorage ? JSON.parse(userStorage) : null);
+
+  }, []);
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole");
-    const accessToken = localStorage.getItem("accessToken");
-    const email = localStorage.getItem("userEmail");
 
-    console.log("role", role);
-    setIsOng(role === "ONG");
+    if (!user) return;
+    setIsOng(user?.role === "ONG");
 
     async function fetchEvents() {
-      if (accessToken && email) {
-        const response = await eventService.getEventsByUser(accessToken, email);
+      if (user?.accessToken && user?.email) {
+        const response = await eventService.getEventsByUser(user.accessToken, user.email);
         setEvents(response);
       }
     }
 
     fetchEvents();
     setIsLoading(false);
-  }, []);
+  }, [user]);
 
   return !isLoading && (
     <Container header={true}>

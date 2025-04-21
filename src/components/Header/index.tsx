@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState, useContext } from "react";
+import { FC, useEffect, useState, useContext } from "react";
 import { Button, Layout, Space, Drawer, Switch } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,6 +14,7 @@ import {
 } from "@ant-design/icons";
 import styles from "./styles.module.css";
 import { ThemeContext } from "@/pages/_app";
+import { User } from "@/types/user";
 
 const { Header: AntHeader } = Layout;
 
@@ -23,17 +24,22 @@ const Header: FC = () => {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { darkMode, toggleTheme } = useContext(ThemeContext);
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const role = localStorage.getItem("userRole");
-    setIsAuthenticated(!!token);
-    setUserRole(role as "ONG" | "VOLUNTEER" | null);
+    const userStorage = localStorage.getItem("user");
+    setUser(userStorage ? JSON.parse(userStorage) : null);
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+    setIsAuthenticated(!!user.accessToken);
+    setUserRole(user.role as "ONG" | "VOLUNTEER" | null);
+  }
+  , [user]);
+
   const handleSignOut = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("userRole");
+    localStorage.removeItem("user");
     setIsAuthenticated(false);
     setUserRole(null);
     router.push("/");

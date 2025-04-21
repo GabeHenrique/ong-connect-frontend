@@ -1,35 +1,31 @@
 import { FC, useContext, useEffect, useRef, useState } from "react";
 import { eventService, VolunteerApplicationDto } from "@/services/eventService";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Container from "@/components/Container";
 import { ThemeContext } from "@/pages/_app";
 import { Table, TableProps } from "antd";
 import Title from "antd/lib/typography/Title";
 import Link from "next/link";
+import { User } from "@/types/user";
 
 const Volunteers: FC = () => {
   const [volunteers, setVolunteers] = useState<VolunteerApplicationDto[]>([]);
-  const { data: session } = useSession();
   const router = useRouter();
   const { id } = router.query;
   const { darkMode } = useContext(ThemeContext);
   const [loading, setLoading] = useState(true);
   const eventName = useRef("");
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
-    if (!session || session.user?.role !== "ONG") {
-      router.push("/");
-    }
-  }, [session, router]);
+    const userStorage = localStorage.getItem("user");
+    setUser(userStorage ? JSON.parse(userStorage) : null);
+  }, []);
 
   useEffect(() => {
-    if (!session || !id) return;
+    if (!user?.accessToken || !id) return;
     const fetchVolunteers = async () => {
-      const result = await eventService.getVolunteers(
-        +id,
-        session?.accessToken
-      );
+      const result = await eventService.getVolunteers(+id, user.accessToken);
       if (result.length > 0) {
         eventName.current = result[0].eventName;
       }
@@ -37,7 +33,11 @@ const Volunteers: FC = () => {
       setVolunteers(result);
     };
     fetchVolunteers();
-  }, [id, session]);
+  }, [id, user]);
+
+  if (!user?.accessToken || user?.role !== "ONG") {
+    return null;
+  }
 
   const columns: TableProps<VolunteerApplicationDto>["columns"] = [
     {

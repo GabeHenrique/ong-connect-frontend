@@ -5,6 +5,7 @@ import Container from "@/components/Container";
 import Link from "next/link";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { ThemeContext } from "../_app";
+import { access } from "fs";
 
 const { Title, Text } = Typography;
 
@@ -27,8 +28,13 @@ const LoginPage: FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("accessToken", data.access_token);
-        localStorage.setItem("userRole", data.user.role);
+        const userData = {
+          email: values.email,
+          role: data.user.role,
+          accessToken: data.access_token,
+          name: data.user.name,
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
         message.success("Login realizado com sucesso");
         await router.push("/");
       } else {

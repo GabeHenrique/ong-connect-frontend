@@ -16,14 +16,14 @@ const Home: FC = () => {
   useEffect(() => {
     async function fetchEvents() {
       try {
-      const response = await eventService.getAllEvents(12, search);
-      setEvents(response);
-    } catch (error) {
-      router.push("/500");
+        const response = await eventService.getAllEvents(12, search);
+        setEvents(response);
+      } catch (error) {
+        router.push("/500");
+      }
     }
-  }
     fetchEvents();
-  }, [search]);
+  }, [search, router]);
 
   const handleSearch = useCallback((value: string) => {
     setSearch(value);

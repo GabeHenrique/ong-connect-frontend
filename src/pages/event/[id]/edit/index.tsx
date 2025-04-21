@@ -12,8 +12,6 @@ import {
   message,
 } from "antd";
 import Image from "next/image";
-
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Container from "@/components/Container";
 import { eventService } from "@/services/eventService";
@@ -27,6 +25,7 @@ import { ThemeContext } from "@/pages/_app";
 import dayjs from "dayjs";
 import { EventDto } from "@/services/eventService";
 import type { RcFile, UploadFile } from "antd/es/upload/interface";
+import { User } from "@/types/user";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -34,7 +33,6 @@ const { Title, Text } = Typography;
 const EditEventPage: FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [event, setEvent] = useState<EventDto | null>(null);
@@ -42,6 +40,12 @@ const EditEventPage: FC = () => {
   const { darkMode } = useContext(ThemeContext);
   const DATE_FORMAT = "DD/MM/YYYY HH:mm";
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [user, setUser] = useState<User>();
+
+  useEffect(() => {
+    const userStorage = localStorage.getItem("user");
+    setUser(userStorage ? JSON.parse(userStorage) : null);
+  }, []);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -50,7 +54,6 @@ const EditEventPage: FC = () => {
         const eventData = await eventService.getEvent(Number(id));
         setEvent(eventData);
 
-        // Preencher o formulário com os dados existentes
         form.setFieldsValue({
           name: eventData.name,
           description: eventData.description,
@@ -59,7 +62,6 @@ const EditEventPage: FC = () => {
           vagas: eventData.vagas,
         });
 
-        // Se houver imagem, adicionar ao fileList
         if (eventData.image) {
           setFileList([
             {
@@ -79,15 +81,7 @@ const EditEventPage: FC = () => {
     fetchEvent();
   }, [id, form]);
 
-  useEffect(() => {
-    if (!session) return;
-
-    if (session?.user?.role !== "ONG") {
-      router.push("/");
-    }
-  }, [session, router]);
-
-  if (session?.user?.role !== "ONG") {
+  if (!user?.accessToken || user?.role !== "ONG") {
     return null;
   }
 
@@ -106,7 +100,7 @@ const EditEventPage: FC = () => {
   };
 
   const onFinish = async (values: any) => {
-    if (!session || !id) return;
+    if (!user?.accessToken || !id) return;
 
     setLoading(true);
     try {
@@ -124,7 +118,7 @@ const EditEventPage: FC = () => {
       const result = await eventService.updateEvent(
         Number(id),
         formData,
-        session.accessToken
+        user.accessToken
       );
 
       if (result.id) {

@@ -12,7 +12,6 @@ import {
   Form,
   Input,
 } from "antd";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Container from "@/components/Container";
 import {
@@ -26,6 +25,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { NotificationPlacement } from "antd/es/notification/interface";
+import { User } from "@/types/user";
 
 const { Title, Text, Paragraph } = Typography;
 const Context = React.createContext({ name: "Default" });
@@ -42,7 +42,6 @@ const formatPhone = (value: string) => {
 const EventPage: FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data: session } = useSession();
   const [event, setEvent] = useState<EventDto>();
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [belongsToUser, setBelongsToUser] = useState(false);
@@ -50,6 +49,7 @@ const EventPage: FC = () => {
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification();
+  const [user, setUser] = useState<User>();
 
   const openNotification = (
     placement: NotificationPlacement,
@@ -72,15 +72,18 @@ const EventPage: FC = () => {
   };
 
   useEffect(() => {
-    if (event && session && session.user) {
+    const userStorage = localStorage.getItem("user");
+    setUser(userStorage ? JSON.parse(userStorage) : null);
+  }, []);
+
+  useEffect(() => {
+    if (event && user?.email) {
       setIsConfirmed(
-        event.volunteers?.some(
-          (attendee) => attendee.email === session.user?.email
-        )
+        event.volunteers?.some((attendee) => attendee.email === user.email)
       );
-      setBelongsToUser(event.creator?.email === session.user.email);
+      setBelongsToUser(event.creator?.email === user.email);
     }
-  }, [event, session]);
+  }, [event, user]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -92,15 +95,15 @@ const EventPage: FC = () => {
       setEvent(event);
     };
     fetchEvent();
-  }, [id, session]);
+  }, [id]);
 
   const handleAttendance = async () => {
-    if (session && session.user && event) {
+    if (user?.accessToken && user?.email && event) {
       try {
         const updatedEvent = await eventService.toggleAttendance(
           event.id,
-          session.user.email!,
-          session.accessToken
+          user.email,
+          user.accessToken
         );
         openNotification("bottomRight", isConfirmed);
         form.resetFields();
@@ -129,29 +132,29 @@ const EventPage: FC = () => {
   };
 
   const handleConfirmDelete = async () => {
-    if (session && session.user && event) {
-      await eventService.deleteEvent(event.id, session.accessToken);
+    if (user?.accessToken && event) {
+      await eventService.deleteEvent(event.id, user.accessToken);
       await router.push("/");
     }
   };
 
   const handleApplyClick = () => {
-    if (session && session.user) {
+    if (user?.email && user?.name) {
       form.setFieldsValue({
-        name: session.user.name,
-        email: session.user.email,
+        name: user.name,
+        email: user.email,
       });
       setIsApplicationModalOpen(true);
     }
   };
 
   const handleApplicationSubmit = async (values: VolunteerApplication) => {
-    if (session && session.user && event) {
+    if (user?.accessToken && event) {
       try {
         const updatedEvent = await eventService.applyForEvent(
           event.id,
           values,
-          session.accessToken
+          user.accessToken
         );
         setEvent(updatedEvent);
         openNotification("bottomRight", false);
@@ -296,7 +299,7 @@ const EventPage: FC = () => {
                       </Paragraph>
                     </div>
 
-                    {session && session.user.role !== "ONG" && (
+                    {user?.role && user.role !== "ONG" && (
                       <Button
                         type={isConfirmed ? "default" : "primary"}
                         size="large"

@@ -1,12 +1,10 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { Button, Divider, Form, Input, Typography, Alert, Radio } from "antd";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Container from "@/components/Container";
 import Link from "next/link";
 import { IdcardOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { ThemeContext } from "../_app";
-import {AUTH_PROVIDER} from "@/pages/api/auth/[...nextauth]";
 
 const { Title, Text } = Typography;
 
@@ -51,20 +49,21 @@ const SignupPage: FC = () => {
       setUserRegistred(false);
 
       if (response.ok) {
-        const result = await signIn(AUTH_PROVIDER, {
-          redirect: false,
+        const data = await response.json();
+        const userData = {
           email: values.email,
-          password: values.password,
-        });
-
-        if (result?.error) {
-        } else {
-          router.push("/");
-        }
+          role: data.user.role,
+          accessToken: data.access_token,
+          name: data.user.name,
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
+        router.push("/");
       } else {
         const data = await response.json();
+        console.error(data);
       }
     } catch (error) {
+      console.error("Error during signup:", error);
     } finally {
       setLoading(false);
     }
@@ -187,7 +186,7 @@ const SignupPage: FC = () => {
                 message: "A senha deve conter pelo menos um número",
               },
               {
-                pattern: /[!@#$%^&*(),.?":{}|<>]/,
+                pattern: /[!@#$%^&*(),.?\":{}|<>]/,
                 message: "A senha deve conter pelo menos um caractere especial",
               },
             ]}

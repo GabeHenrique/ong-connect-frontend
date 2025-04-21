@@ -9,7 +9,6 @@ import {
   Alert,
   Upload,
 } from "antd";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Container from "@/components/Container";
 import { eventService } from "@/services/eventService";
@@ -22,18 +21,24 @@ import {
 import { ThemeContext } from "@/pages/_app";
 import dayjs from "dayjs";
 import type { RcFile, UploadFile } from "antd/es/upload/interface";
+import { User } from "@/types/user";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
 const CreateEventPage: FC = () => {
   const router = useRouter();
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const { darkMode } = useContext(ThemeContext);
   const DATE_FORMAT = "DD/MM/YYYY HH:mm";
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [user, setUser] = useState<User>();
+
+  useEffect(() => {
+    const userStorage = localStorage.getItem("user");
+    setUser(userStorage ? JSON.parse(userStorage) : null);
+  }, []);
 
   useEffect(() => {
     if (isError) {
@@ -45,21 +50,11 @@ const CreateEventPage: FC = () => {
     }
   }, [isError]);
 
-  useEffect(() => {
-    if (!session) return;
-
-    if (session?.user?.role !== "ONG") {
-      router.push("/");
-    }
-  }, [session, router]);
-
-  if (session?.user?.role !== "ONG") {
+  if (!user?.accessToken || user?.role !== "ONG") {
     return null;
   }
 
   const onFinish = async (values: any) => {
-    if (!session) return;
-
     setLoading(true);
     try {
       const formData = new FormData();
@@ -73,10 +68,7 @@ const CreateEventPage: FC = () => {
         formData.append("image", fileList[0].originFileObj);
       }
 
-      const result = await eventService.createEvent(
-        formData,
-        session.accessToken
-      );
+      const result = await eventService.createEvent(formData, user.accessToken);
 
       if (result.id) {
         await router.push("/my-events");
