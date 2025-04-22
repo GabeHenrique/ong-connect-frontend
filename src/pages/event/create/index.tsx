@@ -71,7 +71,7 @@ const CreateEventPage: FC = () => {
       const result = await eventService.createEvent(formData, user.accessToken);
 
       if (result.id) {
-        await router.push("/my-events");
+        await router.push("/event/" + result.id);
         return;
       }
       setIsError(true);
