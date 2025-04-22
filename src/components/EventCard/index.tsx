@@ -3,6 +3,7 @@ import { Card, Col, Space, Tag, Typography } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { EnvironmentOutlined, UserOutlined } from "@ant-design/icons";
+import { truncateAfterTwentyWords } from "@/utils/truncate-description";
 
 const { Text } = Typography;
 
@@ -56,7 +57,7 @@ const EventCard = ({ event }: { event: EventDto }) => {
               marginBottom: "16px",
             }}
           >
-            {event.description}
+            {truncateAfterTwentyWords(event.description)}
           </Text>
 
           <Space direction="vertical" size="small" style={{ width: "100%" }}>
