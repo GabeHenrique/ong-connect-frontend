@@ -118,11 +118,11 @@ const EditEventPage: FC = () => {
       const result = await eventService.updateEvent(
         Number(id),
         formData,
-        user.accessToken
+        user.accessToken,
       );
 
       if (result.id) {
-        await router.push("/my-events");
+        await router.push("/event/" + id);
         return;
       }
       setIsError(true);
