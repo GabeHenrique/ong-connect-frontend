@@ -130,9 +130,9 @@ Para mais detalhes sobre a implementação, consulte nossa [Wiki](wiki-link) que
 ## TODO
 
 * [ ] Adicionar cobertura de testes
-* [ ] Adicionar documentação de API
-* [ ] Adicionar documentação de arquitetura
-* [ ] Adicionar funcionalidade de recuperação de senha]
+* [X] Adicionar documentação de API
+* [X] Adicionar documentação de arquitetura
+* [X] Adicionar funcionalidade de recuperação de senha
 * [X] Adicionar funcionalidade de listar voluntários por evento (ONG)
 * [ ] Usar coordenadas para localização de eventos
 * [ ] Adicionar funcionalidade de favoritar eventos
