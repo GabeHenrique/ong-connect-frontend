@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    const darkMode = sessionStorage.getItem("darkMode");
+    const darkMode = localStorage.getItem("darkMode");
     if (darkMode) {
       setDarkMode(JSON.parse(darkMode));
       document.body.style.background = "#141414";
@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   const toggleTheme = () => {
-    sessionStorage.setItem("darkMode", JSON.stringify(!darkMode));
+    localStorage.setItem("darkMode", JSON.stringify(!darkMode));
     setDarkMode(!darkMode);
     if (!darkMode) {
       document.body.style.background = "#141414";
