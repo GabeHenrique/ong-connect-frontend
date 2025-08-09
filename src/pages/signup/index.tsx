@@ -12,7 +12,7 @@ const SignupPage: FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
-  const [passwordRules, setPasswordRules] = useState({
+  const [_, setPasswordRules] = useState({
     length: false,
     letter: false,
     number: false,
@@ -187,7 +187,7 @@ const SignupPage: FC = () => {
                 message: "A senha deve conter pelo menos um número",
               },
               {
-                pattern: /[!@#$%^&*(),.?\":{}|<>]/,
+                pattern: /[!@#$%^&*(),.?":{}|<>]/,
                 message: "A senha deve conter pelo menos um caractere especial",
               },
             ]}

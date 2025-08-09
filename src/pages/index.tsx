@@ -1,10 +1,10 @@
-import { FC, useCallback, useEffect, useState } from "react";
-import { Input, Row, Typography, Card } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import {FC, useEffect, useState} from "react";
+import {Card, Input, Row, Typography} from "antd";
+import {SearchOutlined} from "@ant-design/icons";
 import Container from "@/components/Container";
-import { EventDto, eventService } from "@/services/eventService";
+import {EventDto, eventService} from "@/services/eventService";
 import EventCard from "@/components/EventCard";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
 const { Title, Text } = Typography;
 
@@ -12,22 +12,35 @@ const Home: FC = () => {
   const [events, setEvents] = useState<EventDto[]>([]);
   const [search, setSearch] = useState("");
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     async function fetchEvents() {
       try {
         const response = await eventService.getAllEvents(12, search);
         setEvents(response);
-      } catch (error) {
+      } catch (_) {
         router.push("/500");
       }
     }
     fetchEvents();
   }, [search, router]);
 
-  const handleSearch = useCallback((value: string) => {
-    setSearch(value);
-  }, []);
+  const handleSearch = (value: string) => {
+    setLoading(true);
+
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      setSearch(value);
+      setLoading(false);
+    }, 300);
+
+    setSearchTimeout(timeout);
+  };
 
   return (
     <Container header={true}>

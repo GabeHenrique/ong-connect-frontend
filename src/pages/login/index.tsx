@@ -5,7 +5,6 @@ import Container from "@/components/Container";
 import Link from "next/link";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { ThemeContext } from "../_app";
-import { access } from "fs";
 
 const { Title, Text } = Typography;
 
@@ -41,7 +40,7 @@ const LoginPage: FC = () => {
         setUnauthorized(true);
         message.error("Credenciais inválidas");
       }
-    } catch (error) {
+    } catch (_) {
       message.error("Erro ao conectar ao servidor");
     } finally {
       setLoading(false);
@@ -98,6 +97,7 @@ const LoginPage: FC = () => {
           >
             <Input
               prefix={<UserOutlined style={{ color: "#bfbfbf" }} />}
+              type="email"
               placeholder="Seu email"
             />
           </Form.Item>
