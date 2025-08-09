@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import { Button, Divider, Form, Input, Typography, Alert, Radio } from "antd";
 import { useRouter } from "next/router";
 import Container from "@/components/Container";
@@ -57,7 +57,7 @@ const SignupPage: FC = () => {
           name: data.user.name,
         };
         localStorage.setItem("user", JSON.stringify(userData));
-        router.push("/");
+        await router.push("/");
       } else {
         const data = await response.json();
         console.error(data);
@@ -168,6 +168,7 @@ const SignupPage: FC = () => {
           >
             <Input
               prefix={<UserOutlined style={{ color: "#bfbfbf" }} />}
+              type="email"
               placeholder="Seu email"
             />
           </Form.Item>
